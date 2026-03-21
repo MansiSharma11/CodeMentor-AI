@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeMentor AI — Learn. Remember. Grow.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Syne:wght@400;600;700;800&family=Instrument+Serif:ital@0;1&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+
+<body>
+
+    <!-- Config Modal -->
+    <div class="modal-overlay open" id="configModal">
+        <div class="modal">
+            <div class="modal-title">🧠 Connect CodeMentor AI</div>
+            <div class="modal-desc">
+                Connect your <strong>Hindsight Cloud</strong> instance to enable persistent memory across sessions. Your
+                coding patterns, mistakes, and progress will be remembered forever.
+            </div>
+            <div class="form-group">
+                <div class="form-label">HINDSIGHT API ENDPOINT</div>
+                <input class="form-input" id="cfgHindsightUrl" value="https://api.hindsight.vectorize.io"
+                    placeholder="https://api.hindsight.vectorize.io">
+                <div class="form-hint">From Hindsight Cloud dashboard → "Connect to Hindsight" → API Endpoint</div>
+            </div>
+            <div class="form-group">
+                <div class="form-label">HINDSIGHT API KEY</div>
+                <input class="form-input" id="cfgHindsightKey" type="password" placeholder="hsk_33e152...">
+                <div class="form-hint">From the API Key section (shown once at creation). Stored in session only.</div>
+            </div>
+            <div class="form-group">
+                <div class="form-label">GROQ API KEY</div>
+                <input class="form-input" id="cfgAnthropicKey" type="password" placeholder="gsk_...">
+                <div class="form-hint">Powers AI mentor responses (Groq — ultra fast!). <a
+                        href="https://console.groq.com/keys" target="_blank">console.groq.com →</a></div>
+            </div>
+            <div class="form-group">
+                <div class="form-label">YOUR NAME (used for memory scoping)</div>
+                <input class="form-input" id="cfgUserName" value="Alex" placeholder="Alex">
+                <div class="form-hint">Creates a personal tag <code style="color:var(--accent)">student:yourname</code>
+                    in Hindsight</div>
+            </div>
+            <div id="connectionStatus" style="display:none"></div>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="skipConfig()">🎮 Demo Mode</button>
+                <button class="btn-primary" onclick="testAndSave()">🚀 Connect & Start</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="app">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">⚡</div>
+                <div class="logo-text">Code<span>Mentor</span> AI</div>
+            </div>
+            <div class="badge" id="modeBadge" style="display:none">Demo Mode</div>
+            <div class="badge mem" id="memoryBadge" style="display:none">0 memories</div>
+            <div class="header-sep"></div>
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()"
+                title="Toggle light/dark mode">🌙</button>
+            <div class="header-user" onclick="document.getElementById('configModal').classList.add('open')">
+                <div class="avatar" id="userAvatar">A</div>
+                <span id="userName">Alex</span>
+            </div>
+        </header>
+
+        <div class="sidebar-left">
+            <div class="sidebar-section">
+                <div class="sidebar-label">Language</div>
+                <div class="lang-grid">
+                    <button class="lang-btn active" onclick="selectLang(this,'Python')">
+                        <div class="lang-dot" style="background:#3572A5"></div>Python
+                    </button>
+                    <button class="lang-btn" onclick="selectLang(this,'JavaScript')">
+                        <div class="lang-dot" style="background:#f1e05a"></div>JS
+                    </button>
+                    <button class="lang-btn" onclick="selectLang(this,'TypeScript')">
+                        <div class="lang-dot" style="background:#3178c6"></div>TS
+                    </button>
+                    <button class="lang-btn" onclick="selectLang(this,'Java')">
+                        <div class="lang-dot" style="background:#b07219"></div>Java
+                    </button>
+                    <button class="lang-btn" onclick="selectLang(this,'C++')">
+                        <div class="lang-dot" style="background:#f34b7d"></div>C++
+                    </button>
+                    <button class="lang-btn" onclick="selectLang(this,'Go')">
+                        <div class="lang-dot" style="background:#00ADD8"></div>Go
+                    </button>
+                </div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-label">Session</div>
+                <div class="nav-items">
+                    <div class="nav-item active" id="nav-chat" onclick="switchTab('chat')"><span>💬</span> AI Mentor
+                        Chat</div>
+                    <div class="nav-item" id="nav-challenge" onclick="switchTab('challenge')"><span>🎯</span> Challenges
+                    </div>
+                    <div class="nav-item" id="nav-progress" onclick="switchTab('progress')"><span>📊</span> Progress
+                    </div>
+                </div>
+            </div>
+            <div class="sidebar-section">
+                <div class="sidebar-label">Quick Topics</div>
+                <div class="nav-items">
+                    <div class="nav-item" onclick="sendQuick('What mistakes do I commonly make?')"><span>🔴</span> My
+                        Mistake Patterns</div>
+                    <div class="nav-item" onclick="sendQuick('Give me a personalized coding challenge')"><span>🎯</span>
+                        Personalized Challenge</div>
+                    <div class="nav-item" onclick="sendQuick('What should I learn next?')"><span>🗺️</span> Learning
+                        Path</div>
+                    <div class="nav-item" onclick="sendQuick('Explain recursion with examples')"><span>🌀</span>
+                        Recursion</div>
+                    <div class="nav-item" onclick="sendQuick('Explain dynamic programming')"><span>💡</span> Dynamic
+                        Programming</div>
+                    <div class="nav-item" onclick="sendQuick('How do I improve my Big-O complexity?')"><span>⚡</span>
+                        Big-O Complexity</div>
+                </div>
+            </div>
+            <div class="memory-status" style="display:none">
+                <div class="pulse-dot"></div>
+                <div class="memory-text">
+                    <strong id="memStatusLabel">Demo Mode</strong><br>
+                    <span id="memStatusSub">Connect Hindsight to go live</span>
+                </div>
+            </div>
+        </div>
+
+        <main>
+            <div class="tab-bar">
+                <div class="tab active" id="tab-chat" onclick="switchTab('chat')">💬 Mentor Chat</div>
+                <div class="tab" id="tab-challenge" onclick="switchTab('challenge')">🎯 Challenges <span
+                        class="tab-count">3</span></div>
+                <div class="tab" id="tab-progress" onclick="switchTab('progress')">📊 Progress</div>
+            </div>
+
+            <div id="view-chat" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="msg ai">
+                        <div class="msg-avatar">🤖</div>
+                        <div class="msg-content">
+                            <div class="msg-sender">CodeMentor AI · just now</div>
+                            <div class="msg-bubble">
+                                <div class="memory-tag">✨ Hindsight Memory — Persistent Learning</div>
+                                Hey! I'm your AI coding mentor with <strong>persistent memory</strong> powered by
+                                Hindsight. I remember your coding patterns, past mistakes, and learning progress —
+                                permanently, across every session.<br><br>
+                                What are you working on today?
+                                <div class="hint-chips">
+                                    <span class="hint-chip" onclick="sendQuick('What mistakes do I commonly make?')">My
+                                        mistake patterns</span>
+                                    <span class="hint-chip" onclick="sendQuick('Give me a coding challenge')">Give me a
+                                        challenge</span>
+                                    <span class="hint-chip" onclick="sendQuick('What should I learn next?')">Learning
+                                        path</span>
+                                    <span class="hint-chip"
+                                        onclick="sendQuick('Review my understanding of arrays')">Arrays review</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-input-area">
+                    <div class="code-toolbar">
+                        <button class="toolbar-btn" onclick="insertCodeBlock()">📝 Code Block</button>
+                        <button class="toolbar-btn" onclick="sendQuick('Help me debug this code:\n```\n\n```')">🐛
+                            Debug</button>
+                        <button class="toolbar-btn" onclick="sendQuick('Explain this concept step by step')">💡
+                            Explain</button>
+                        <div class="toolbar-sep"></div>
+                        <div class="lang-indicator">🔵 <span id="activeLangLabel">Python</span></div>
+                    </div>
+                    <div class="input-wrapper">
+                        <textarea id="chatInput" rows="1" placeholder="Ask anything, paste code, describe a problem…"
+                            onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+                        <button class="send-btn" id="sendBtn" onclick="sendMessage()">↑</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-challenge" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
+                <div class="challenge-container">
+                    <div class="challenge-left" id="challengeDesc"></div>
+                    <div class="challenge-right">
+                        <div class="editor-header">
+                            <div class="editor-dots">
+                                <div class="editor-dot ed-red"></div>
+                                <div class="editor-dot ed-yellow"></div>
+                                <div class="editor-dot ed-green"></div>
+                            </div>
+                            <div class="editor-filename" id="editorFilename">solution.py</div>
+                        </div>
+                        <textarea class="code-editor" id="codeEditor" spellcheck="false"></textarea>
+                        <div class="editor-footer">
+                            <button class="run-btn" onclick="submitSolution()">▶ Submit</button>
+                            <button class="hint-btn" onclick="getHint()">💡 Hint</button>
+                            <button class="next-btn" onclick="loadNextChallenge()">Next →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-progress" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
+                <div class="progress-view">
+                    <div class="progress-grid" id="statsGrid"></div>
+                    <div>
+                        <div class="section-title">🔴 Mistake Patterns <small
+                                style="font-size:11px;color:var(--text-dim)">(tracked by Hindsight)</small></div>
+                        <div style="height:7px"></div>
+                        <div class="mistake-list" id="mistakeList"></div>
+                    </div>
+                    <div>
+                        <div class="section-title">🗺️ Personalized Learning Path</div>
+                        <div style="height:7px"></div>
+                        <div class="path-list" id="pathList"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div class="sidebar-right">
+            <div class="panel-header">
+                🧠 Live Memory Bank
+                <div style="margin-left:auto;font-size:9px;font-family:'DM Mono',monospace;color:var(--text-dimmer)"
+                    id="bankLabel">demo mode</div>
+            </div>
+            <div class="panel-content" id="memoryPanel">
+                <div style="font-size:12px;color:var(--text-dimmer);text-align:center;padding:16px">Memories appear here
+                    as Hindsight learns your patterns…</div>
+            </div>
+            <div class="panel-sub">
+                <div class="sidebar-label" style="margin-bottom:5px">API Monitor</div>
+                <div class="api-monitor" id="apiMonitor"><span class="log-ts">[init]</span> CodeMentor AI ready<br>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="toast" id="toast"></div>
+
+    <script src="app.js"></script>
+
+</body>
+
+</html>
