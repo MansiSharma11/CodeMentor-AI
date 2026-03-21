@@ -138,13 +138,7 @@ Each challenge is selected with a **"Why this challenge?"** rationale powered by
 
 ---
 
-## 📸 Screenshots
-
-> *(Add screenshots of the app here once deployed)*
-
----
-
-## 🤝 Contributing
+## 🤝 Coantributing
 
 This project was built for a hackathon. Feel free to fork and extend it!
 
