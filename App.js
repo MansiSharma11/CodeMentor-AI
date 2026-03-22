@@ -24,11 +24,11 @@ function toggleTheme() {
 // Load saved config from localStorage (so keys persist across sessions)
 const _saved = (() => { try { return JSON.parse(localStorage.getItem('codementor_config') || '{}'); } catch { return {}; } })();
 const CONFIG = {
-    hindsightUrl: _saved.hindsightUrl || 'https://api.hindsight.vectorize.io',
-    hindsightKey: _saved.hindsightKey || '',
-    anthropicKey: _saved.anthropicKey || '',
-    userName: _saved.userName || 'Alex',
-    demoMode: !_saved.hindsightKey,
+    hindsightUrl: _saved.hindsightUrl || '__HINDSIGHT_API_URL__' || 'https://api.hindsight.vectorize.io',
+    hindsightKey: _saved.hindsightKey || '__HINDSIGHT_API_KEY__' || '',
+    anthropicKey: _saved.anthropicKey || '__GROQ_API_KEY__' || '',
+    userName: _saved.userName || '__STUDENT_NAME__' || 'Alex',
+    demoMode: !(_saved.hindsightKey || '__HINDSIGHT_API_KEY__'),
 };
 const STATE = {
     lang: 'Python', memories: [], memoryCount: 0,

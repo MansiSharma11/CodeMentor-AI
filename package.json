@@ -1,0 +1,13 @@
+{
+  "name": "codementor-ai",
+  "version": "1.0.0",
+  "description": "AI-powered coding mentor with persistent memory",
+  "main": "App.js",
+  "scripts": {
+    "build": "node build.js",
+    "start": "npx live-server"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT"
+}
