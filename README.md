@@ -151,6 +151,12 @@ Ideas for future features:
 
 ---
 
+## 👥 Team
+- **Mansi Sharma** - Team Leader
+- **Vatsal Joshi** - Member
+
+---
+
 ## 📄 License
 
 MIT License — free to use, modify, and distribute.
